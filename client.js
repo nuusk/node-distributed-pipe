@@ -1,3 +1,7 @@
+#!/usr/bin/env node
+/*
+ usage ./client.js <server_host> <command [...args]>
+*/
 require('dotenv').config();
 const debug = require('debug')('client');
 const Client = require('./services/Client');
@@ -9,7 +13,12 @@ debug.enabled = DEBUG_ENABLED;
 const client = new Client();
 
 (async () => {
-  await client.connect();
+  const serverHost = process.argv.slice(2, 3).join(' ');
   const command = process.argv.slice(3).join(' ');
-  debug(command);
+  if (process.argv.length < 4) {
+    debug('ERROR: usage \n$ ./client.js <server_host> <command [...args]>');
+    process.exit();
+  }
+  // await client.connect(serverHost);
+  // debug(command);
 })();

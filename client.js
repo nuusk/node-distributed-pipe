@@ -19,6 +19,5 @@ const client = new Client();
     debug('ERROR: usage \n$ ./client.js <server_host> <command [...args]>');
     process.exit();
   }
-  // await client.connect(serverHost);
-  // debug(command);
+  await client.connect(serverHost);
 })();

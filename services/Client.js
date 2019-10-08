@@ -3,17 +3,20 @@ const WebSocket = require('rpc-websockets').Client;
 const debug = require('debug')('client');
 
 const {
-  DEBUG_ENABLED, PORT, HOST,
+  DEBUG_ENABLED, SERVER_PORT, SERVER_HOST,
 } = process.env;
 
 debug.enabled = DEBUG_ENABLED;
-const port = PORT || 8080;
-const host = HOST || 'localhost';
 
 class Client {
+  constructor(host) {
+    this.host = host || SERVER_HOST || 'localhost';
+    this.port = SERVER_PORT || 8080;
+  }
+
   connect() {
     return new Promise((resolve) => {
-      this.ws = new WebSocket(`ws://${host}:${port}`);
+      this.ws = new WebSocket(`ws://${this.host}:${this.port}`);
 
       this.ws.on('open', () => {
         debug('Successfully connected');

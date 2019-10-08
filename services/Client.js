@@ -9,18 +9,6 @@ const {
 debug.enabled = DEBUG_ENABLED;
 
 class Client {
-  constructor() {
-    this.inputStream = '';
-
-    process.stdin.setEncoding('utf8');
-    process.stdin.on('data', (chunk) => {
-      this.inputStream += chunk;
-    });
-    process.stdin.on('end', () => {
-      // send to server
-    });
-  }
-
   connect(host) {
     return new Promise((resolve) => {
       this.ws = new WebSocket(`ws://${host || SERVER_HOST || 'localhost'}:${SERVER_PORT || 8080}`);
@@ -30,6 +18,19 @@ class Client {
         resolve();
       });
     });
+  }
+
+  pipe(command, stream) {
+    return new Promise((resolve) => {
+      this.ws.call('pipe', { command, stream }).then((data) => {
+        debug(data);
+        resolve(data);
+      });
+    });
+  }
+
+  disconnect() {
+    process.exit();
   }
 }
 

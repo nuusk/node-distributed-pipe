@@ -1,5 +1,6 @@
 require('dotenv').config();
 const WebSocketServer = require('rpc-websockets').Server;
+const { spawn } = require('child_process');
 const debug = require('debug')('server');
 
 const {
@@ -19,6 +20,7 @@ class Server {
     debug(`Server started on ${this.host}:${this.port}`);
 
     this.initListeners();
+    this.initEvents();
   }
 
   initListeners() {
@@ -29,6 +31,51 @@ class Server {
     this.ws.on('error', (err) => {
       debug(err);
     });
+  }
+
+  initEvents() {
+    this.ws.register('pipe', ({ command, stream }) => new Promise((resolve, reject) => {
+      const program = command.split(' ')[0];
+      const args = command.split(' ').slice(1);
+      debug(`program: ${program}`);
+      debug(`args: ${args}`);
+      debug(`stream: ${stream}`);
+      debug('~~~~~');
+
+      let stderr = '';
+      let response = '';
+
+      const child = spawn(program, args);
+
+      child.stdin.write(stream);
+      child.stdin.end();
+
+      child.stdin.setEncoding('utf-8');
+
+      child.stdout.on('data', (data) => {
+        debug(data.toString());
+        response += data;
+      });
+
+      child.stderr.on('data', (data) => {
+        debug(data.toString());
+        stderr += data;
+      });
+
+      child.on('error', (err) => {
+        reject(stderr);
+        debug(err);
+        process.exit(1);
+      });
+
+      child.on('close', (code) => {
+        debug(`Sending back code ${code} output \n${response}`);
+        resolve({ code, stream: response, stderr });
+        debug(`Child process exited with code ${code}`);
+      });
+
+      return command;
+    }));
   }
 }
 

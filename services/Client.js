@@ -9,14 +9,9 @@ const {
 debug.enabled = DEBUG_ENABLED;
 
 class Client {
-  constructor(host) {
-    this.host = host || SERVER_HOST || 'localhost';
-    this.port = SERVER_PORT || 8080;
-  }
-
-  connect() {
+  connect(host) {
     return new Promise((resolve) => {
-      this.ws = new WebSocket(`ws://${this.host}:${this.port}`);
+      this.ws = new WebSocket(`ws://${host || SERVER_HOST || 'localhost'}:${SERVER_PORT || 8080}`);
 
       this.ws.on('open', () => {
         debug('Successfully connected');

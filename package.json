@@ -1,11 +1,22 @@
 {
-  "name": "distributed-pipe",
+  "name": "node-distributed-pipe",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "debug": "^4.1.1",
+    "dotenv": "^8.1.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "rpc-websockets": "^4.6.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2"
+  }
 }
